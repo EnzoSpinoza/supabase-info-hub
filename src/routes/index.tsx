@@ -210,6 +210,7 @@ function Index() {
             <a href="#assinaturas" className="transition-colors hover:text-fog">Assinaturas</a>
             <a href="#galeria" className="transition-colors hover:text-fog">Galeria</a>
             <a href="#horarios" className="transition-colors hover:text-fog">Horários</a>
+            <a href="/barbeiro" className="transition-colors hover:text-fog">Painel do barbeiro</a>
           </nav>
           <a
             href="#agendar"
