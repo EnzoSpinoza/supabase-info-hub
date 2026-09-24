@@ -10,7 +10,7 @@ import { Fotos } from "@/components/admin/Fotos";
 import { MinhaConta } from "@/components/admin/MinhaConta";
 import { cardCls, fmtPrice, localDate, monthRange, thisMonth } from "@/components/admin/shared";
 
-export const Route = createFileRoute("/_authenticated/barbeiro")({
+export const Route = createFileRoute("/barbeiro")({
   head: () => ({
     meta: [
       { title: "Painel do Barbeiro — Barbearia Fagundes" },
