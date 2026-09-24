@@ -60,8 +60,14 @@ function AppointmentsTable({ packageOnly = false }: { packageOnly?: boolean }) {
       if (status === "completed") {
         const appt = (appts.data ?? []).find((a) => a.id === id);
         if (appt?.services) {
-          // Lança a entrada financeira do corte (ignorado se já existir).
-          await supabase.from("financial_transactions").insert({
+          const existing = await supabase
+            .from("financial_transactions")
+            .select("id")
+            .eq("appointment_id", id)
+            .maybeSingle();
+          if (existing.error) throw existing.error;
+          if (existing.data) return;
+          const transaction = await supabase.from("financial_transactions").insert({
             appointment_id: id,
             type: "income",
             category: "Serviços",
@@ -69,6 +75,7 @@ function AppointmentsTable({ packageOnly = false }: { packageOnly?: boolean }) {
             amount: appt.services.price,
             transaction_date: appt.date,
           });
+          if (transaction.error) throw transaction.error;
         }
       }
     },
