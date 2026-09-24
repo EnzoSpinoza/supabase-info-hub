@@ -393,7 +393,7 @@ export function HorariosTab() {
   );
 }
 
-function HourRow({ label, weekday, hour }: { label: string; weekday: number; hour?: Hour }) {
+function HourRow({ label, weekday, hour }: { label: string; weekday: number; hour: Hour | undefined }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(hour?.open_time?.slice(0, 5) ?? "09:00");
   const [close, setClose] = useState(hour?.close_time?.slice(0, 5) ?? "18:00");
