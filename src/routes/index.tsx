@@ -134,7 +134,14 @@ function Index() {
   const [booked, setBooked] = useState(false);
 
   const [subForm, setSubForm] = useState({ name: "", phone: "", packageId: "" as string });
-  const [subDone, setSubDone] = useState(false);
+  const [subResult, setSubResult] = useState<{
+    success: boolean;
+    paid?: boolean;
+    price?: number;
+    cancel_requested?: boolean;
+    message?: string;
+  } | null>(null);
+  const [cancelMode, setCancelMode] = useState(false);
 
   const bookMutation = useMutation({
     mutationFn: async () => {
@@ -160,7 +167,22 @@ function Index() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => setSubDone(true),
+    onSuccess: (data) => setSubResult(data as typeof subResult),
+  });
+
+  const cancelMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.rpc("cancel_package_subscription", {
+        p_phone: subForm.phone,
+        p_package_id: subForm.packageId,
+      });
+      if (error) throw error;
+      return data as { success: boolean; message?: string };
+    },
+    onSuccess: (data) => {
+      if (data.success) setSubResult({ success: true, cancel_requested: true });
+      else setSubResult(data);
+    },
   });
 
   const galleryPhotos =
@@ -330,7 +352,8 @@ function Index() {
                     <button
                       onClick={() => {
                         setSubForm((f) => ({ ...f, packageId: p.id }));
-                        setSubDone(false);
+                        setSubResult(null);
+                        setCancelMode(false);
                         document
                           .getElementById("assinar-form")
                           ?.scrollIntoView({ behavior: "smooth" });
@@ -350,16 +373,45 @@ function Index() {
 
             {/* formulário de assinatura */}
             <div id="assinar-form" className="mt-8 scroll-mt-24 rounded-2xl border border-fog/10 bg-fog/5 p-6 backdrop-blur-xl">
-              {subDone ? (
-                <p className="text-center font-medium text-iris">
-                  Assinatura registrada! Entraremos em contato para confirmar o pagamento via Pix.
-                </p>
+              {subResult ? (
+                <div className="text-center">
+                  {!subResult.success ? (
+                    <p className="font-medium text-destructive">
+                      {subResult.message ?? "Não encontramos uma assinatura ativa com esses dados."}
+                    </p>
+                  ) : subResult.cancel_requested ? (
+                    <div>
+                      <p className="font-display text-2xl font-semibold text-iris">Cancelamento solicitado</p>
+                      <p className="mt-2 text-sm text-fog/70">O pedido ficou registrado para a barbearia.</p>
+                    </div>
+                  ) : subResult.paid ? (
+                    <div>
+                      <p className="font-display text-2xl font-semibold text-iris">Sua assinatura deste mês já está paga</p>
+                      <p className="mt-2 text-sm text-fog/70">Você já pode agendar seus horários normalmente.</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="font-display text-2xl font-semibold text-iris">Assinatura registrada!</p>
+                      <p className="mt-2 text-sm text-fog/70">Faça o Pix para ativar o plano deste mês.</p>
+                      {settings.data?.pix_key && (
+                        <div className="mx-auto mt-5 max-w-md rounded-xl border border-dashed border-iris/40 bg-iris/5 p-4 text-left">
+                          <p className="font-mono text-xs uppercase text-fog/50">Chave Pix</p>
+                          <code className="mt-2 block break-all font-mono text-sm text-fog/90">{settings.data.pix_key}</code>
+                          <p className="mt-2 text-xs text-fog/50">{settings.data.pix_receiver_name}{settings.data.pix_city ? ` — ${settings.data.pix_city}` : ""}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <button type="button" onClick={() => setSubResult(null)} className="mt-5 text-sm text-fog/50 transition-colors hover:text-fog">Voltar</button>
+                </div>
               ) : (
                 <form
                   className="grid gap-4 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end"
                   onSubmit={(e) => {
                     e.preventDefault();
-                    if (subForm.packageId) subscribeMutation.mutate();
+                    if (!subForm.packageId) return;
+                    if (cancelMode) cancelMutation.mutate();
+                    else subscribeMutation.mutate();
                   }}
                 >
                   <label className="block">
@@ -404,14 +456,25 @@ function Index() {
                   </label>
                   <button
                     type="submit"
-                    disabled={subscribeMutation.isPending}
+                    disabled={subscribeMutation.isPending || cancelMutation.isPending}
                     className="rounded-full bg-iris px-6 py-2.5 font-medium text-primary-foreground ring-1 ring-fog/10 transition-colors hover:bg-iris/90 disabled:opacity-50"
                   >
-                    {subscribeMutation.isPending ? "Enviando…" : "Assinar"}
+                    {subscribeMutation.isPending || cancelMutation.isPending
+                      ? "Enviando…"
+                      : cancelMode
+                        ? "Solicitar cancelamento"
+                        : "Assinar"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCancelMode((value) => !value)}
+                    className="text-sm text-fog/50 transition-colors hover:text-fog md:col-span-full md:justify-self-start"
+                  >
+                    {cancelMode ? "Quero assinar" : "Já é assinante? Cancelar assinatura"}
                   </button>
                 </form>
               )}
-              {subscribeMutation.isError && (
+              {(subscribeMutation.isError || cancelMutation.isError) && (
                 <p className="mt-3 text-center text-sm text-destructive">
                   Não foi possível registrar. Tente novamente.
                 </p>
