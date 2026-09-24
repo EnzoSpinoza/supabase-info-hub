@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,12 @@ import { MinhaConta } from "@/components/admin/MinhaConta";
 import { cardCls, fmtPrice, localDate, monthRange, thisMonth } from "@/components/admin/shared";
 
 export const Route = createFileRoute("/barbeiro")({
+  ssr: false,
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) throw redirect({ to: "/auth" });
+    return { user: data.user };
+  },
   head: () => ({
     meta: [
       { title: "Painel do Barbeiro — Barbearia Fagundes" },
