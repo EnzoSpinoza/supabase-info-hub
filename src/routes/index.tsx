@@ -11,13 +11,13 @@ import galleryStudio from "@/assets/gallery-studio.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Barbearia Spinoza — Cortes, Barba e Assinaturas em Pedreira-SP" },
+      { title: "Barbearia Fagundes — Cortes, Barba e Assinaturas em Pedreira-SP" },
       {
         name: "description",
         content:
           "Agende online seu corte, barba, navalhado e tratamentos. Planos de assinatura mensal a partir de R$ 79,90 e pagamento via Pix. Segunda a Sábado em Pedreira-SP.",
       },
-      { property: "og:title", content: "Barbearia Spinoza — Cortes, Barba e Assinaturas" },
+      { property: "og:title", content: "Barbearia Fagundes — Cortes, Barba e Assinaturas" },
       {
         property: "og:description",
         content:
@@ -181,7 +181,7 @@ function Index() {
       <header className="sticky top-0 z-50 border-b border-fog/10 bg-ink/50 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <a href="#" className="font-display text-xl font-semibold tracking-tight">
-            Spinoza<span className="text-iris">.</span>
+            Fagundes<span className="text-iris">.</span>
           </a>
           <nav className="hidden items-center gap-8 text-sm text-fog/70 md:flex">
             <a href="#servicos" className="transition-colors hover:text-fog">Serviços</a>
@@ -634,7 +634,7 @@ function Index() {
       <footer className="relative z-10 border-t border-fog/10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-10 text-sm text-fog/50 md:flex-row">
           <p className="font-display text-lg font-semibold text-fog">
-            Spinoza<span className="text-iris">.</span> Barbearia
+            Fagundes<span className="text-iris">.</span> Barbearia
           </p>
           <p className="font-mono text-xs">© 2026 — Pedreira, São Paulo</p>
         </div>
