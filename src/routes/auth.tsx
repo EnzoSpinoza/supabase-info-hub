@@ -6,6 +6,11 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Área do Barbeiro — Barbearia Fagundes" },
+      { name: "description", content: "Acesso reservado à gestão da Barbearia Fagundes." },
+      { property: "og:title", content: "Área do Barbeiro — Barbearia Fagundes" },
+      { property: "og:description", content: "Acesso reservado à gestão da Barbearia Fagundes." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
