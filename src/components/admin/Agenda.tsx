@@ -86,7 +86,9 @@ function AppointmentsTable({ packageOnly = false }: { packageOnly?: boolean }) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-appointments"] }),
   });
 
-  const rows = (appts.data ?? []).filter((a) => (packageOnly ? a.package_id : true));
+  const rows = (appts.data ?? []).filter((a) =>
+    packageOnly ? Boolean(a.package_id) : !a.package_id,
+  );
 
   return (
     <div className={cardCls}>
