@@ -26,7 +26,9 @@ export const localDate = () => {
 export const thisMonth = () => localDate().slice(0, 7);
 
 export const monthRange = (month: string) => {
-  const [y, m] = month.split("-").map(Number);
+  const parts = month.split("-").map(Number);
+  const y = parts[0] ?? 0;
+  const m = parts[1] ?? 1;
   const last = new Date(y, m, 0).getDate();
   return { start: `${month}-01`, end: `${month}-${String(last).padStart(2, "0")}` };
 };
