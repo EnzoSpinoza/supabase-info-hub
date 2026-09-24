@@ -61,7 +61,7 @@ function AppointmentsTable({ packageOnly = false }: { packageOnly?: boolean }) {
         const appt = (appts.data ?? []).find((a) => a.id === id);
         if (appt?.services) {
           // Lança a entrada financeira do corte (ignorado se já existir).
-          const { code } = await supabase.from("financial_transactions").insert({
+          await supabase.from("financial_transactions").insert({
             appointment_id: id,
             type: "income",
             category: "Serviços",
@@ -69,16 +69,13 @@ function AppointmentsTable({ packageOnly = false }: { packageOnly?: boolean }) {
             amount: appt.services.price,
             transaction_date: appt.date,
           });
-          if (code && code !== "23505") {
-            // erro inesperado: deixa o status salvo, sem bloquear a agenda
-          }
         }
       }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-appointments"] });
       qc.invalidateQueries({ queryKey: ["admin-finance"] });
-ec   },
+    },
   });
 
   const remove = useMutation({
