@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -210,7 +210,7 @@ function Index() {
             <a href="#assinaturas" className="transition-colors hover:text-fog">Assinaturas</a>
             <a href="#galeria" className="transition-colors hover:text-fog">Galeria</a>
             <a href="#horarios" className="transition-colors hover:text-fog">Horários</a>
-            <a href="/barbeiro" className="transition-colors hover:text-fog">Painel do barbeiro</a>
+            <Link to="/barbeiro" className="transition-colors hover:text-fog">Painel do barbeiro</Link>
           </nav>
           <a
             href="#agendar"
